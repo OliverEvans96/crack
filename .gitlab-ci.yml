@@ -1,0 +1,32 @@
+# Based on Dimm's .gitlab-ci.yml:
+# https://gitlab.nautilus.optiputer.net/prp/golang-docker-gitlabci/blob/master/.gitlab-ci.yml
+
+image: docker:git
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab-registry.nautilus.optiputer.net
+
+stages:
+  - build
+
+.build-template: &build-def
+  stage: build
+  # Only run build for tagged git commits
+  only:
+    - tags
+  # Tag build job so that it will be picked
+  # up by shared gitlab-runners.
+  tags:
+    - build-as-docker
+  script:
+    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE
+  variables: &var-def
+    GET_SOURCES_ATTEMPTS: 3
+
+build:
+    <<: *build-def
+    variables:
+      <<: *var-def
+      SUBTAG: ""
