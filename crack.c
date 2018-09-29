@@ -11,7 +11,7 @@
 const int HASH_LEN = 86;
 const int SALT_LEN = 19;
 const int NUM_SYMBOLS = 93;
-const int MAX_PASS_LEN = 3;
+const int MAX_PASS_LEN = 5;
 
 void int2pass(int i, int word_len, char* symbols, char* result) {
   int j;
