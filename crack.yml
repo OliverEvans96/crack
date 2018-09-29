@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: crack-test
+spec:
+  template:
+    spec:
+      containers:
+      - name: crack
+        image: gitlab-registry.nautilus.optiputer.net/oliverevans96/crack:latest
+        env:
+        - name: HASH
+          value: "$6$t21qsxdLd5DsnSjy$a3SKms/NLSQUKJMn8S.FMVG0y8hsBKgZYt8yGqZRNXkmcMA2gMhOroUXxlohDBAtNXijbFfO5jE6Eq298TDj00"
+        - name: OMP_MAX_THREADS
+          value: &cpu "64"
+        resources:
+          requests:
+            ephemeral-storage: 1Gi
+            cpu: *cpu
+            memory: 4Gi
+          limits:
+            ephemeral-storage: 1Gi
+            cpu: *cpu
+            memory: 4Gi
+      restartPolicy: OnFailure
