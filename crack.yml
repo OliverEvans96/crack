@@ -1,13 +1,17 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: crack-test
+  name: crack
 spec:
   template:
     spec:
       containers:
       - name: crack
         image: gitlab-registry.nautilus.optiputer.net/oliverevans96/crack:latest
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - "(exec stdbuf -oL -e0 time crack.out \"$HASH\" \"$OMP_MAX_THREADS\" | tee /mnt/crack.log) 2>&1 | tee /mnt/crack.time"
         env:
         - name: HASH
           value: "$6$t21qsxdLd5DsnSjy$a3SKms/NLSQUKJMn8S.FMVG0y8hsBKgZYt8yGqZRNXkmcMA2gMhOroUXxlohDBAtNXijbFfO5jE6Eq298TDj00"
@@ -22,4 +26,12 @@ spec:
             ephemeral-storage: 1Gi
             cpu: *cpu
             memory: 4Gi
+        volumeMounts:
+        - name: crack-vol
+          mountPath: /mnt
+      volumes:
+      - name: crack-vol
+        nfs:
+          server: 10.244.25.108
+          path: "/test/crack"
       restartPolicy: OnFailure
