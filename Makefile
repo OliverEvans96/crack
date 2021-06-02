@@ -1,4 +1,5 @@
-all: crack.out
+CC=gcc
+CFLAGS=-lcrypt -lm -fopenmp -Ofast 
 
-%.out: %.c
-	gcc -lcrypt -lm -fopenmp -Ofast $^ -o $@
+crack: crack.c
+	$(CC) $(CFLAGS) $^ -o $@
